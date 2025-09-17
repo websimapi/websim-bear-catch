@@ -51,12 +51,37 @@ class BearCatchGame {
     }
     
     createEnvironment() {
-        // Waterfall cliff
-        const cliffGeometry = new THREE.BoxGeometry(12, 2, 6);
-        const cliffMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
-        const cliff = new THREE.Mesh(cliffGeometry, cliffMaterial);
-        cliff.position.set(0, -1, 0);
-        this.scene.add(cliff);
+        // Log platform (cylindrical and wood-like)
+        const logGeometry = new THREE.CylinderGeometry(6, 6, 2, 16);
+        const logMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
+        const log = new THREE.Mesh(logGeometry, logMaterial);
+        log.position.set(0, -1, 0);
+        log.rotation.z = Math.PI / 2; // Rotate to make it lie horizontally
+        this.scene.add(log);
+        
+        // Log rings/texture details
+        for (let i = 0; i < 8; i++) {
+            const ringGeometry = new THREE.TorusGeometry(5.8 - i * 0.2, 0.1, 8, 16);
+            const ringMaterial = new THREE.MeshLambertMaterial({ color: 0x654321 });
+            const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+            ring.position.set(0, -1, 0);
+            ring.rotation.x = Math.PI / 2;
+            this.scene.add(ring);
+        }
+        
+        // Log end caps
+        const endCapGeometry = new THREE.CircleGeometry(6, 16);
+        const endCapMaterial = new THREE.MeshLambertMaterial({ color: 0xDEB887 });
+        
+        const leftCap = new THREE.Mesh(endCapGeometry, endCapMaterial);
+        leftCap.position.set(-6, -1, 0);
+        leftCap.rotation.y = Math.PI / 2;
+        this.scene.add(leftCap);
+        
+        const rightCap = new THREE.Mesh(endCapGeometry, endCapMaterial);
+        rightCap.position.set(6, -1, 0);
+        rightCap.rotation.y = -Math.PI / 2;
+        this.scene.add(rightCap);
         
         // Waterfall effect (simple animated strips)
         for (let i = 0; i < 20; i++) {
@@ -100,21 +125,54 @@ class BearCatchGame {
     createBear() {
         const bearGroup = new THREE.Group();
         
-        // Bear body (chunky voxel style)
+        // Bear body (brown)
         const bodyGeometry = new THREE.BoxGeometry(1.2, 1.5, 0.8);
         const bodyMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
         const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
         body.position.y = 0.75;
         bearGroup.add(body);
         
-        // Bear head
+        // Bear belly (tan/beige)
+        const bellyGeometry = new THREE.BoxGeometry(0.8, 1.2, 0.6);
+        const bellyMaterial = new THREE.MeshLambertMaterial({ color: 0xDEB887 });
+        const belly = new THREE.Mesh(bellyGeometry, bellyMaterial);
+        belly.position.set(0, 0.75, 0.1);
+        bearGroup.add(belly);
+        
+        // Bear head (brown)
         const headGeometry = new THREE.BoxGeometry(1, 1, 0.8);
         const headMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
         const head = new THREE.Mesh(headGeometry, headMaterial);
         head.position.y = 1.8;
         bearGroup.add(head);
         
-        // Bear ears
+        // Bear snout (tan)
+        const snoutGeometry = new THREE.BoxGeometry(0.6, 0.4, 0.4);
+        const snoutMaterial = new THREE.MeshLambertMaterial({ color: 0xDEB887 });
+        const snout = new THREE.Mesh(snoutGeometry, snoutMaterial);
+        snout.position.set(0, 1.6, 0.4);
+        bearGroup.add(snout);
+        
+        // Bear nose (black)
+        const noseGeometry = new THREE.BoxGeometry(0.2, 0.15, 0.15);
+        const noseMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
+        const nose = new THREE.Mesh(noseGeometry, noseMaterial);
+        nose.position.set(0, 1.65, 0.65);
+        bearGroup.add(nose);
+        
+        // Bear eyes (blue)
+        const eyeGeometry = new THREE.BoxGeometry(0.15, 0.15, 0.1);
+        const eyeMaterial = new THREE.MeshLambertMaterial({ color: 0x4169E1 });
+        
+        const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+        leftEye.position.set(-0.2, 1.85, 0.45);
+        bearGroup.add(leftEye);
+        
+        const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+        rightEye.position.set(0.2, 1.85, 0.45);
+        bearGroup.add(rightEye);
+        
+        // Bear ears (brown with tan inner)
         const earGeometry = new THREE.BoxGeometry(0.3, 0.3, 0.2);
         const earMaterial = new THREE.MeshLambertMaterial({ color: 0x654321 });
         
@@ -126,7 +184,19 @@ class BearCatchGame {
         rightEar.position.set(0.3, 2.1, 0.2);
         bearGroup.add(rightEar);
         
-        // Bear arms
+        // Inner ears (tan)
+        const innerEarGeometry = new THREE.BoxGeometry(0.15, 0.15, 0.1);
+        const innerEarMaterial = new THREE.MeshLambertMaterial({ color: 0xDEB887 });
+        
+        const leftInnerEar = new THREE.Mesh(innerEarGeometry, innerEarMaterial);
+        leftInnerEar.position.set(-0.3, 2.1, 0.25);
+        bearGroup.add(leftInnerEar);
+        
+        const rightInnerEar = new THREE.Mesh(innerEarGeometry, innerEarMaterial);
+        rightInnerEar.position.set(0.3, 2.1, 0.25);
+        bearGroup.add(rightInnerEar);
+        
+        // Bear arms (brown)
         const armGeometry = new THREE.BoxGeometry(0.4, 1, 0.4);
         const armMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
         
@@ -137,6 +207,18 @@ class BearCatchGame {
         const rightArm = new THREE.Mesh(armGeometry, armMaterial);
         rightArm.position.set(0.8, 0.8, 0);
         bearGroup.add(rightArm);
+        
+        // Bear legs (brown)
+        const legGeometry = new THREE.BoxGeometry(0.4, 0.8, 0.4);
+        const legMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
+        
+        const leftLeg = new THREE.Mesh(legGeometry, legMaterial);
+        leftLeg.position.set(-0.3, -0.1, 0);
+        bearGroup.add(leftLeg);
+        
+        const rightLeg = new THREE.Mesh(legGeometry, legMaterial);
+        rightLeg.position.set(0.3, -0.1, 0);
+        bearGroup.add(rightLeg);
         
         bearGroup.position.set(0, 0, 2);
         this.bear = bearGroup;
@@ -436,4 +518,3 @@ class BearCatchGame {
 
 // Start the game
 new BearCatchGame();
-
